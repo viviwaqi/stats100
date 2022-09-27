@@ -1,6 +1,7 @@
 ---
 title: "stat hw 1"
-output: html_document
+output:
+  html_document: default
 date: "2022-09-26"
 ---
 
@@ -13,7 +14,58 @@ library(tidyverse)
 ```
 ```{r}
 pain<- read.csv("pain.csv")
+score<- pain$Score
+haircolor<- pain$HairColor
 ```
+
+```{r}
+
+```
+
+```{r}
+mean(score)
+```
+```{r}
+sd(score)
+```
+
+```{r}
+db<- filter(pain, haircolor == "DarkBrunette") 
+db
+```
+```{r}
+mean(db$Score)
+```
+```{r}
+lb<- filter(pain, haircolor == "LightBrunette")
+lb
+```
+```{r}
+sd(lb$Score)
+```
+```{r}
+count(lb)
+```
+```{r}
+pain %>%
+  group_by(HairColor) %>%
+  summarise(HairColor, mean=mean(Score)) %>%
+  arrange(desc(mean))
+```
+
+```{r}
+pain %>%
+  group_by(HairColor) %>%
+  summarise(HairColor, standard_dev=sd(Score)) %>%
+  arrange(standard_dev)
+```
+
+```{r}
+pain %>%
+  group_by(HairColor) %>%
+  count()
+```
+
 
 
 

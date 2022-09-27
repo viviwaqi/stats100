@@ -370,7 +370,104 @@ display: none;
 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>pain&lt;- read.csv(&quot;pain.csv&quot;)</code></pre>
+<pre class="r"><code>pain&lt;- read.csv(&quot;pain.csv&quot;)
+score&lt;- pain$Score
+haircolor&lt;- pain$HairColor</code></pre>
+<pre class="r"><code>mean(score)</code></pre>
+<pre><code>## [1] 47.84211</code></pre>
+<pre class="r"><code>sd(score)</code></pre>
+<pre><code>## [1] 11.4565</code></pre>
+<pre class="r"><code>db&lt;- filter(pain, haircolor == &quot;DarkBrunette&quot;) 
+db</code></pre>
+<pre><code>##      HairColor Score
+## 1 DarkBrunette    32
+## 2 DarkBrunette    39
+## 3 DarkBrunette    51
+## 4 DarkBrunette    30
+## 5 DarkBrunette    35</code></pre>
+<pre class="r"><code>mean(db$Score)</code></pre>
+<pre><code>## [1] 37.4</code></pre>
+<pre class="r"><code>lb&lt;- filter(pain, haircolor == &quot;LightBrunette&quot;)
+lb</code></pre>
+<pre><code>##       HairColor Score
+## 1 LightBrunette    42
+## 2 LightBrunette    50
+## 3 LightBrunette    41
+## 4 LightBrunette    37</code></pre>
+<pre class="r"><code>sd(lb$Score)</code></pre>
+<pre><code>## [1] 5.446712</code></pre>
+<pre class="r"><code>count(lb)</code></pre>
+<pre><code>##   n
+## 1 4</code></pre>
+<pre class="r"><code>pain %&gt;%
+  group_by(HairColor) %&gt;%
+  summarise(HairColor, mean=mean(Score)) %&gt;%
+  arrange(desc(mean))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;HairColor&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre><code>## # A tibble: 19 × 2
+## # Groups:   HairColor [4]
+##    HairColor      mean
+##    &lt;chr&gt;         &lt;dbl&gt;
+##  1 LightBlond     59.2
+##  2 LightBlond     59.2
+##  3 LightBlond     59.2
+##  4 LightBlond     59.2
+##  5 LightBlond     59.2
+##  6 DarkBlond      51.2
+##  7 DarkBlond      51.2
+##  8 DarkBlond      51.2
+##  9 DarkBlond      51.2
+## 10 DarkBlond      51.2
+## 11 LightBrunette  42.5
+## 12 LightBrunette  42.5
+## 13 LightBrunette  42.5
+## 14 LightBrunette  42.5
+## 15 DarkBrunette   37.4
+## 16 DarkBrunette   37.4
+## 17 DarkBrunette   37.4
+## 18 DarkBrunette   37.4
+## 19 DarkBrunette   37.4</code></pre>
+<pre class="r"><code>pain %&gt;%
+  group_by(HairColor) %&gt;%
+  summarise(HairColor, standard_dev=sd(Score)) %&gt;%
+  arrange(standard_dev)</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;HairColor&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre><code>## # A tibble: 19 × 2
+## # Groups:   HairColor [4]
+##    HairColor     standard_dev
+##    &lt;chr&gt;                &lt;dbl&gt;
+##  1 LightBrunette         5.45
+##  2 LightBrunette         5.45
+##  3 LightBrunette         5.45
+##  4 LightBrunette         5.45
+##  5 DarkBrunette          8.32
+##  6 DarkBrunette          8.32
+##  7 DarkBrunette          8.32
+##  8 DarkBrunette          8.32
+##  9 DarkBrunette          8.32
+## 10 LightBlond            8.53
+## 11 LightBlond            8.53
+## 12 LightBlond            8.53
+## 13 LightBlond            8.53
+## 14 LightBlond            8.53
+## 15 DarkBlond             9.28
+## 16 DarkBlond             9.28
+## 17 DarkBlond             9.28
+## 18 DarkBlond             9.28
+## 19 DarkBlond             9.28</code></pre>
+<pre class="r"><code>pain %&gt;%
+  group_by(HairColor) %&gt;%
+  count()</code></pre>
+<pre><code>## # A tibble: 4 × 2
+## # Groups:   HairColor [4]
+##   HairColor         n
+##   &lt;chr&gt;         &lt;int&gt;
+## 1 DarkBlond         5
+## 2 DarkBrunette      5
+## 3 LightBlond        5
+## 4 LightBrunette     4</code></pre>
 
 
 
