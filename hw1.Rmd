@@ -1,6 +1,7 @@
 ---
 title: "stat hw 1"
 output:
+  word_document: default
   html_document: default
 date: "2022-09-26"
 ---
