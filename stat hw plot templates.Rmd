@@ -1,0 +1,37 @@
+---
+title: "stat hw plot templates"
+output: pdf_document
+date: "2022-09-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(scales)
+library(RColorBrewer)
+```
+
+```{r}
+timesexercised<- c(0,1,2,3,10)
+numstudents<- c(22,40,21,14,3)
+```
+```{r}
+timesexercised<- as.factor(timesexercised)
+```
+
+```{r}
+exframe<- data.frame(timesexercised, numstudents)
+```
+
+Columns (Factor & Numeric)
+```{r}
+exframe %>%
+  ggplot(aes(x=timesexercised, y=numstudents))+
+  geom_col()
+```
+
+
