@@ -1,0 +1,62 @@
+---
+title: "hw 2"
+output: pdf_document
+date: "2022-10-03"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(scales)
+library(RColorBrewer)
+```
+```{r}
+setwd("~/Documents/GitHub/stats100")
+```
+
+```{r}
+colors<- read.csv("colors.csv")
+colors
+```
+## A. Plot a barplot of the eye color of the subjects. What color is the least common?
+```{r}
+colors %>%
+  ggplot(aes(x=Eye, fill=Eye))+
+  geom_bar()+
+  labs(x="Eye Color", y="Frequency")
+```
+## B. Plot a two category barplot of the subjects, using sex and eye color. Comparing men and women, who has a higher probability of brown eyes?
+```{r}
+colors %>%
+  ggplot(aes(x=Eye, fill=Sex))+
+  geom_bar(position="dodge")+
+  labs(x="Eye Color", y="Frequency", title = "Eye Color By Sex")
+```
+## C. Plot a mosaic plot of sex and eye color. Are there more males or females in the study? Do males or females tend to have a higher probability of blue eyes? What eye color is least common for males?
+```{r}
+estable <-table(colors$Sex, colors$Eye)
+estable
+```
+
+```{r}
+mosaicplot(estable, main = "Eye Colors By Sex", color = brewer.pal(4, "BrBG"))
+```
+```{r}
+colors %>%
+  ggplot(aes(x=GPA))+
+  geom_histogram(binwidth = 0.1, color = "limegreen", fill= "mediumpurple1")
+```
+```{r}
+colors %>%
+  ggplot(aes(x=GPA, y=Sex, fill=Sex))+
+  geom_boxplot()
+```
+```{r}
+colors %>%
+  ggplot(aes(x=GPA, y=Eye, fill=Eye))+
+  geom_boxplot()
+```
+
