@@ -7,6 +7,9 @@ date: "2022-10-20"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+```{r}
+setwd("~/Documents/GitHub/stats100")
+```
 
 ```{r}
 library(tidyverse)
@@ -24,19 +27,24 @@ measured in class.
 students <- read.csv("student.csv")
 students
 ```
-
-(a) Using R, find the 95% confidence interval for the
-average students height.
-Confidence interval for a mean
 ```{r}
-
+summary(students)
 ```
 
-(b) What is the highest average height you expect a stu-
-dent to have, based on the confidence interval from
-(a)?
-(c) Using R, find the 99% confidence interval for the
-average students pulse.
-(d) What is the lowest average pulse you expect a stu-
-dent to have, based on the confidence interval from
-(c)?
+
+
+#(a) Using R, find the 95% confidence interval for theaverage students height. (Confidence interval for a mean)
+```{r}
+t.test(students$height, conf.level = 0.95)
+```
+#(b) What is the highest average height you expect a student to have, based on the confidence interval from (a)?
+
+The upper bound of the confidence interval, which is 68.5639
+
+#(c) Using R, find the 99% confidence interval for the average students pulse.
+```{r}
+t.test(students$pulse, conf.level = 0.99)
+```
+#(d) What is the lowest average pulse you expect a student to have, based on the confidence interval from (c)?
+
+The lower bound of the confidence interval, which is 71.5894
