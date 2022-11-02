@@ -1,0 +1,70 @@
+---
+title: "hw 5"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+setwd("~/Documents/GitHub/stats100")
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(scales)
+library(RColorBrewer)
+library(stats)
+```
+
+
+```{r}
+drp<- read.csv("drp.csv")
+drp
+```
+A treatment class of 21
+third-grade students participated in these activities for
+eight weeks, and a control class of 23 third-graders fol-
+lowed the same curriculum without the activities. After
+the eight-week period, students in both classes took a
+Degree of Reading Power (DRP) test which measures
+the aspects of reading ability that the treatment is de-
+signed to improve.
+The first column is the group (treatment or control), and
+the second is the DRP score (the higher the better).
+
+(a) Find the 95% confidence interval for the difference
+in average DRP score.
+
+```{r}
+controlt<- drp %>%
+  filter(Treatment == "Control") %>%
+  summarise(Treatment, Response)
+controlt
+```
+```{r}
+treatedt<- drp %>%
+  filter(Treatment == "Treated") %>%
+  summarise(Treatment, Response)
+treatedt
+```
+
+```{r}
+t.test(controlt$Response, treatedt$Response, conf.level = 0.95)
+```
+Answer = (-18.67588, -1.23302)
+
+(b) If the experimenter is interested in if the treatment
+group has a higher average than the control group,
+find the test-statistic.
+
+```{r}
+t.test(controlt$Response, treatedt$Response, alternative = "less")
+```
+
+
+
+
+
