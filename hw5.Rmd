@@ -54,7 +54,7 @@ treatedt
 ```{r}
 t.test(controlt$Response, treatedt$Response, conf.level = 0.95)
 ```
-Answer = (-18.67588, -1.23302)
+Answer: (-18.67588, -1.23302)
 
 (b) If the experimenter is interested in if the treatment
 group has a higher average than the control group,
@@ -63,8 +63,48 @@ find the test-statistic.
 ```{r}
 t.test(controlt$Response, treatedt$Response, alternative = "less")
 ```
+Answer: -2.3109
 
+(c) If the experimenter is interested in if the treatment
+group has a higher average than the control group,
+find the p-value.
 
+Answer: 0.01319
 
+(d) Do we fail to reject or reject the null hypothesis if
+a = 0.05?
 
+Answer: 0.01319<0.05 so p<a and we can reject null
+
+IQ.csv has two
+columns, the first of which denotes what major a stu-
+dent is from (A, B, or C). The second is the IQ measured
+by the Stanford–Binet Intelligence Scales. The goal is to
+determine if this IQ measures differs on average between
+majors.
+
+```{r}
+iqdf<- read_csv("IQ.csv")
+iqdf
+```
+```{r}
+iqmodel<- lm(iqdf$iq~iqdf$group)
+iqmodel
+```
+```{r}
+anova(iqmodel)
+```
+
+(a) Find the value of the F test-statistic.
+Answer: F stat= 20.016
+
+(b) Find the p-value of the test.
+Answer: P-value= Pr(>F)=7.843e-07
+
+c) Do we fail to reject or reject the null hypothesis?
+(Choose your own a)
+Answer: If a=0.001 then p-value is less than that it, and p<a so we can reject the null
+
+(d) State your conclusion in terms of the problem.
+Answer: Rejection of null means that average IQ does not vary by major
 
