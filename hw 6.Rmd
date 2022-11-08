@@ -1,0 +1,140 @@
+---
+title: "hw 6"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+setwd("~/Documents/GitHub/stats100")
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(scales)
+library(RColorBrewer)
+library(stats)
+```
+#1
+```{r}
+iq<- read.csv("IQ.csv")
+iq
+```
+On Canvas under Files you will find a dataset IQ.csv. It
+has two columns, the first of which denotes what major
+a student is from (A, B, or C). The second is the IQ
+measured by the Stanford–Binet Intelligence Scales. The
+goal is to determine if this IQ measure differs between
+majors.
+(a) Calculate the family-wise (simultaneous, Bonfer-
+roni) 95% confidence intervals for (muA −μB), (muA −
+muC), and (muB −muC), assuming you will make k = 3
+total confidence intervals.
+```{r}
+
+```
+
+(b) What is the largest significant difference in averages
+suggested by all of the confidence intervals? (This
+should be one number).
+```{r}
+
+```
+
+(c) What is the smallest significant difference in aver-
+ages suggested by all of the confidence intervals?
+(This should be one number).
+```{r}
+
+```
+
+(d) What two majors were the most significantly differ-
+ent according to the confidence intervals?
+```{r}
+```
+------------------------------------------------
+#2
+
+```{r}
+beans<- read.csv("beans.csv")
+beans
+```
+(a) Find the test statistic.
+```{r}
+
+```
+
+(b) Find the p-value.
+```{r}
+
+```
+
+(c) Did you reject or fail to reject the null if alpha = 0.05?
+```{r}
+
+```
+
+(d) Which bean plant(s) did the weevils prefer more
+than expected if the null was true?
+```{r}
+
+```
+
+(e) What category contributed most to the value of the
+test-statistic?
+```{r}
+```
+--------------------------------
+#3
+```{r}
+blood<- read_csv("blood.csv")
+blood
+```
+
+(a) State the appropriate null for testing if having this
+particular disease is independent of blood type and
+alternative hypothesis for testing if having this par-
+ticular disease is independent of blood type.
+```{r}
+
+```
+
+(b) Find the test-statistic.
+```{r}
+
+```
+
+(c) Find the p-value.
+```{r}
+
+```
+
+(d) State your conclusion in terms of the problem, as-
+suming alpha = 0.01.
+```{r}
+
+```
+
+(e) Were blood type A individuals more or less likely to
+have the disease than what we expected if the null
+was true?
+```{r}
+
+```
+
+(f) Were blood type O individuals more or less likely to
+have the disease than what we expected if the null
+was true?
+```{r}
+
+```
+
+(g) Which group contributed most to the value of the
+test-statistic?
+```{r}
+
+```
+
