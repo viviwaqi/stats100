@@ -30,7 +30,7 @@ measured by the Stanford–Binet Intelligence Scales. The
 goal is to determine if this IQ measure differs between
 majors.
 (a) Calculate the family-wise (simultaneous, Bonfer-
-roni) 95% confidence intervals for (muA −μB), (muA −
+roni) 95% confidence intervals for (muA −muB), (muA −
 muC), and (muB −muC), assuming you will make k = 3
 total confidence intervals.
 ```{r}
@@ -59,12 +59,17 @@ ent according to the confidence intervals?
 #2
 
 ```{r}
-beans<- read.csv("beans.csv")
-beans
+beanz<- read.csv("beans.csv")
+beanz
 ```
 (a) Find the test statistic.
 ```{r}
-
+beanz<- beanz %>%
+  count(plant)
+beanz
+```
+```{r}
+t.test(beanz$n)
 ```
 
 (b) Find the p-value.
