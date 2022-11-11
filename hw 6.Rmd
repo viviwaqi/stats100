@@ -55,7 +55,7 @@ ages suggested by all of the confidence intervals?
 ent according to the confidence intervals?
 ```{r}
 ```
-------------------------------------------------
+
 #2
 
 ```{r}
@@ -63,13 +63,17 @@ beanz<- read.csv("beans.csv")
 beanz
 ```
 (a) Find the test statistic.
+
 ```{r}
-beanz<- beanz %>%
-  count(plant)
-beanz
+beantable<- table(beanz)
+beantable
 ```
 ```{r}
-t.test(beanz$n)
+probbean<- prop.table(beantable)
+probbean
+```
+```{r}
+t.test(probbean)
 ```
 
 (b) Find the p-value.
@@ -92,7 +96,7 @@ than expected if the null was true?
 test-statistic?
 ```{r}
 ```
---------------------------------
+
 #3
 ```{r}
 blood<- read_csv("blood.csv")
