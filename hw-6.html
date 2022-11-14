@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2022-11-10" />
+<meta name="date" content="2022-11-13" />
 
 <title>hw 6</title>
 
@@ -350,7 +350,7 @@ display: none;
 
 
 <h1 class="title toc-ignore">hw 6</h1>
-<h4 class="date">2022-11-10</h4>
+<h4 class="date">2022-11-13</h4>
 
 </div>
 
@@ -365,23 +365,16 @@ display: none;
 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(ggplot2)
-library(scales)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;scales&#39;
-## 
-## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     discard
-## 
-## The following object is masked from &#39;package:readr&#39;:
-## 
-##     col_factor</code></pre>
-<pre class="r"><code>library(RColorBrewer)
-library(stats)</code></pre>
+<pre class="r"><code>library(stats)
+library(asbio)</code></pre>
+<pre><code>## Loading required package: tcltk</code></pre>
+<pre><code>## Warning in system2(&quot;/usr/bin/otool&quot;, c(&quot;-L&quot;, shQuote(DSO)), stdout = TRUE):
+## running command &#39;&#39;/usr/bin/otool&#39; -L &#39;/Library/Frameworks/R.framework/Resources/
+## library/tcltk/libs//tcltk.so&#39;&#39; had status 1</code></pre>
+<pre class="r"><code>library(tcltk)</code></pre>
 <p>#1</p>
-<pre class="r"><code>iq&lt;- read.csv(&quot;IQ.csv&quot;)
-iq</code></pre>
+<pre class="r"><code>iqq&lt;- read.csv(&quot;IQ.csv&quot;)
+iqq</code></pre>
 <pre><code>##    group iq
 ## 1      A 44
 ## 2      A 40
@@ -435,15 +428,92 @@ Scales. The goal is to determine if this IQ measure differs between
 majors. (a) Calculate the family-wise (simultaneous, Bonfer- roni) 95%
 confidence intervals for (muA −muB), (muA − muC), and (muB −muC),
 assuming you will make k = 3 total confidence intervals.</p>
+<pre class="r"><code>summary(iqq)</code></pre>
+<pre><code>##     group                 iq       
+##  Length:45          Min.   :20.00  
+##  Class :character   1st Qu.:36.00  
+##  Mode  :character   Median :40.00  
+##                     Mean   :39.96  
+##                     3rd Qu.:46.00  
+##                     Max.   :52.00</code></pre>
+<pre class="r"><code>qt(1-0.05/(2*3), 45-3)</code></pre>
+<pre><code>## [1] 2.493667</code></pre>
+<pre class="r"><code>Ybar = aggregate(iq ~ group, data = iqq, mean)$iq
+ni = aggregate(iq ~ group, data = iqq, length)$iq</code></pre>
+<pre class="r"><code>the.model = lm(iq ~ group, data = iqq)
+ANOVA.table = anova(the.model)
+mse = ANOVA.table[2,3] #ms(within)</code></pre>
+<pre class="r"><code>alpha = 0.05
+I = 3 # number of groups 
+k = choose(I, 2)
+n. = sum(ni) #total sample size
+
+t_ag = qt(1- alpha/(2*k), df = n. - k) #t percentile</code></pre>
+<pre class="r"><code># 4. Construct the bonferroni CIs
+
+BON12 = c(Ybar[1] - Ybar[2] - t_ag*sqrt(mse*(1/ni[1] + 1/ni[2])), 
+          Ybar[1] - Ybar[2] + t_ag*sqrt(mse*(1/ni[1] + 1/ni[2])))
+BON13 = c(Ybar[1] - Ybar[3] - t_ag*sqrt(mse*(1/ni[1] + 1/ni[3])), 
+          Ybar[1] - Ybar[3] + t_ag*sqrt(mse*(1/ni[1] + 1/ni[3])))
+BON23 = c(Ybar[2] - Ybar[3] - t_ag*sqrt(mse*(1/ni[2] + 1/ni[3])), 
+          Ybar[2] - Ybar[3] + t_ag*sqrt(mse*(1/ni[2] + 1/ni[3])))</code></pre>
+<pre class="r"><code># 5. We could calculate the two side p-value
+pvalue12 = 2*pt(abs(Ybar[1] - Ybar[2])/sqrt(mse*(1/ni[1] + 1/ni[2])), df = n.-k, lower.tail = F)
+pvalue13 = 2*pt(abs(Ybar[1] - Ybar[3])/sqrt(mse*(1/ni[1] + 1/ni[3])), df = n.-k, lower.tail = F)
+pvalue23 = 2*pt(abs(Ybar[2] - Ybar[3])/sqrt(mse*(1/ni[2] + 1/ni[3])), df = n.-k, lower.tail = F)
+allpvalues = c(pvalue12, pvalue13, pvalue23)</code></pre>
+<pre class="r"><code>BON_all = rbind(BON12, BON13, BON23)
+all.result = cbind(BON_all, allpvalues)
+rownames(all.result) = c(&quot;A vs. B&quot;, &quot;A vs. C&quot;, &quot;B vs. C&quot;)
+colnames(all.result) = c(&quot;Lower&quot;, &quot;Upper&quot;, &quot;P-value&quot;)
+knitr::kable(all.result)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Lower</th>
+<th align="right">Upper</th>
+<th align="right">P-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A vs. B</td>
+<td align="right">-5.694712</td>
+<td align="right">5.561379</td>
+<td align="right">0.9765750</td>
+</tr>
+<tr class="even">
+<td align="left">A vs. C</td>
+<td align="right">-18.028046</td>
+<td align="right">-6.771954</td>
+<td align="right">0.0000021</td>
+</tr>
+<tr class="odd">
+<td align="left">B vs. C</td>
+<td align="right">-17.961379</td>
+<td align="right">-6.705288</td>
+<td align="right">0.0000023</td>
+</tr>
+</tbody>
+</table>
 <ol start="2" style="list-style-type: lower-alpha">
-<li><p>What is the largest significant difference in averages suggested
-by all of the confidence intervals? (This should be one
-number).</p></li>
-<li><p>What is the smallest significant difference in aver- ages
-suggested by all of the confidence intervals? (This should be one
-number).</p></li>
-<li><p>What two majors were the most significantly differ- ent according
-to the confidence intervals?</p></li>
+<li>What is the largest significant difference in averages suggested by
+all of the confidence intervals? (This should be one number). A
+vs. C</li>
+</ol>
+<pre class="r"><code>18.028046-6.771954</code></pre>
+<pre><code>## [1] 11.25609</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>What is the smallest significant difference in aver- ages suggested
+by all of the confidence intervals? (This should be one number). B
+vs. C</li>
+</ol>
+<pre class="r"><code>17.961379-6.705288  </code></pre>
+<pre><code>## [1] 11.25609</code></pre>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>What two majors were the most significantly differ- ent according to
+the confidence intervals? A and B</li>
 </ol>
 <p>#2</p>
 <pre class="r"><code>beanz&lt;- read.csv(&quot;beans.csv&quot;)
@@ -1103,33 +1173,31 @@ beantable</code></pre>
 <pre><code>## plant
 ##   Cowpea     Navy Northern    Pinto 
 ##      155      155      192      144</code></pre>
-<pre class="r"><code>probbean&lt;- prop.table(beantable)
-probbean</code></pre>
-<pre><code>## plant
-##    Cowpea      Navy  Northern     Pinto 
-## 0.2399381 0.2399381 0.2972136 0.2229102</code></pre>
-<pre class="r"><code>t.test(probbean)</code></pre>
+<pre class="r"><code>beantest&lt;- chisq.test(beantable, correct = F)
+beantest</code></pre>
 <pre><code>## 
-##  One Sample t-test
+##  Chi-squared test for given probabilities
 ## 
-## data:  probbean
-## t = 15.393, df = 3, p-value = 0.0005956
-## alternative hypothesis: true mean is not equal to 0
-## 95 percent confidence interval:
-##  0.198312 0.301688
-## sample estimates:
-## mean of x 
-##      0.25</code></pre>
-<ol start="2" style="list-style-type: lower-alpha">
-<li><p>Find the p-value.</p></li>
-<li><p>Did you reject or fail to reject the null if alpha =
-0.05?</p></li>
+## data:  beantable
+## X-squared = 8.1796, df = 3, p-value = 0.04244</code></pre>
+<p>Answer = 8.1796 (b) Find the p-value. Answer = 0.04244</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li><p>Did you reject or fail to reject the null if alpha = 0.05? Answer
+p&lt;a so we can reject</p></li>
 <li><p>Which bean plant(s) did the weevils prefer more than expected if
 the null was true?</p></li>
-<li><p>What category contributed most to the value of the
-test-statistic?</p></li>
 </ol>
-<p>#3</p>
+<pre class="r"><code>beantable-beantest$expected</code></pre>
+<pre><code>## plant
+##   Cowpea     Navy Northern    Pinto 
+##     -6.5     -6.5     30.5    -17.5</code></pre>
+<p>Answer = Northern (e) What category contributed most to the value of
+the test-statistic?</p>
+<pre class="r"><code>beantest$residuals^2</code></pre>
+<pre><code>## plant
+##    Cowpea      Navy  Northern     Pinto 
+## 0.2616099 0.2616099 5.7600619 1.8962848</code></pre>
+<p>Answer = Northern #3</p>
 <pre class="r"><code>blood&lt;- read_csv(&quot;blood.csv&quot;)</code></pre>
 <pre><code>## Rows: 100 Columns: 2
 ## ── Column specification ────────────────────────────────────────────────────────
@@ -1154,21 +1222,69 @@ test-statistic?</p></li>
 ## 10 O     yes    
 ## # … with 90 more rows</code></pre>
 <ol style="list-style-type: lower-alpha">
-<li><p>State the appropriate null for testing if having this particular
+<li>State the appropriate null for testing if having this particular
 disease is independent of blood type and alternative hypothesis for
 testing if having this par- ticular disease is independent of blood
-type.</p></li>
-<li><p>Find the test-statistic.</p></li>
-<li><p>Find the p-value.</p></li>
-<li><p>State your conclusion in terms of the problem, as- suming alpha =
-0.01.</p></li>
-<li><p>Were blood type A individuals more or less likely to have the
-disease than what we expected if the null was true?</p></li>
-<li><p>Were blood type O individuals more or less likely to have the
-disease than what we expected if the null was true?</p></li>
-<li><p>Which group contributed most to the value of the
-test-statistic?</p></li>
+type.</li>
 </ol>
+<p>Null:Disease is not independent from blood type Alt: Disease is
+independent from blood type</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Find the test-statistic.</li>
+</ol>
+<pre class="r"><code>bloodtable&lt;- table(blood$Type, blood$Disease)
+bloodtable</code></pre>
+<pre><code>##     
+##      no yes
+##   A  12  15
+##   AB  7   2
+##   B   8  17
+##   O   9  30</code></pre>
+<pre class="r"><code>bloodtest&lt;- chisq.test(bloodtable, correct = F)</code></pre>
+<pre><code>## Warning in chisq.test(bloodtable, correct = F): Chi-squared approximation may be
+## incorrect</code></pre>
+<pre class="r"><code>bloodtest</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test
+## 
+## data:  bloodtable
+## X-squared = 10.654, df = 3, p-value = 0.01375</code></pre>
+<p>Answer = 10.654 (c) Find the p-value. Answer = 0.01375</p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>State your conclusion in terms of the problem, as- suming alpha =
+0.01.</li>
+</ol>
+<p>p&gt;a so we cannot reject. We cannot say for sure that they are
+independent</p>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Were blood type A individuals more or less likely to have the
+disease than what we expected if the null was true?</li>
+</ol>
+<pre class="r"><code>bloodtest$observed - bloodtest$expected</code></pre>
+<pre><code>##     
+##         no   yes
+##   A   2.28 -2.28
+##   AB  3.76 -3.76
+##   B  -1.00  1.00
+##   O  -5.04  5.04</code></pre>
+<p>Answer = Less likely</p>
+<ol start="6" style="list-style-type: lower-alpha">
+<li>Were blood type O individuals more or less likely to have the
+disease than what we expected if the null was true?</li>
+</ol>
+<p>Answer = More likely</p>
+<ol start="7" style="list-style-type: lower-alpha">
+<li>Which group contributed most to the value of the
+test-statistic?</li>
+</ol>
+<pre class="r"><code>bloodtest$residuals^2</code></pre>
+<pre><code>##     
+##             no       yes
+##   A  0.5348148 0.3008333
+##   AB 4.3634568 2.4544444
+##   B  0.1111111 0.0625000
+##   O  1.8092308 1.0176923</code></pre>
+<p>Answer = AB</p>
 
 
 

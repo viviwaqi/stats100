@@ -1,11 +1,12 @@
 ---
 title: "hw 6"
-output: html_document
+output: pdf_document
 date: "`r Sys.Date()`"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(tinytex.verbose = TRUE)
 ```
 ```{r}
 setwd("~/Documents/GitHub/stats100")
@@ -13,15 +14,15 @@ setwd("~/Documents/GitHub/stats100")
 
 ```{r}
 library(tidyverse)
-library(ggplot2)
-library(scales)
-library(RColorBrewer)
 library(stats)
+library(asbio)
+library(tcltk)
 ```
+
 #1
 ```{r}
-iq<- read.csv("IQ.csv")
-iq
+iqq<- read.csv("IQ.csv")
+iqq
 ```
 On Canvas under Files you will find a dataset IQ.csv. It
 has two columns, the first of which denotes what major
@@ -30,31 +31,83 @@ measured by the Stanford–Binet Intelligence Scales. The
 goal is to determine if this IQ measure differs between
 majors.
 (a) Calculate the family-wise (simultaneous, Bonfer-
-roni) 95% confidence intervals for (muA −muB), (muA −
-muC), and (muB −muC), assuming you will make k = 3
+roni) 95% confidence intervals for (muA-muB), (muA-
+muC), and (muB -muC), assuming you will make k = 3
 total confidence intervals.
 ```{r}
-
+summary(iqq)
 ```
+
+```{r}
+qt(1-0.05/(2*3), 45-3)
+```
+```{r}
+Ybar = aggregate(iq ~ group, data = iqq, mean)$iq
+ni = aggregate(iq ~ group, data = iqq, length)$iq
+```
+
+```{r}
+the.model = lm(iq ~ group, data = iqq)
+ANOVA.table = anova(the.model)
+mse = ANOVA.table[2,3] #ms(within)
+```
+
+```{r}
+alpha = 0.05
+I = 3 # number of groups 
+k = choose(I, 2)
+n. = sum(ni) #total sample size
+
+t_ag = qt(1- alpha/(2*k), df = n. - k) #t percentile
+```
+```{r}
+# 4. Construct the bonferroni CIs
+
+BON12 = c(Ybar[1] - Ybar[2] - t_ag*sqrt(mse*(1/ni[1] + 1/ni[2])), 
+          Ybar[1] - Ybar[2] + t_ag*sqrt(mse*(1/ni[1] + 1/ni[2])))
+BON13 = c(Ybar[1] - Ybar[3] - t_ag*sqrt(mse*(1/ni[1] + 1/ni[3])), 
+          Ybar[1] - Ybar[3] + t_ag*sqrt(mse*(1/ni[1] + 1/ni[3])))
+BON23 = c(Ybar[2] - Ybar[3] - t_ag*sqrt(mse*(1/ni[2] + 1/ni[3])), 
+          Ybar[2] - Ybar[3] + t_ag*sqrt(mse*(1/ni[2] + 1/ni[3])))
+```
+```{r}
+# 5. We could calculate the two side p-value
+pvalue12 = 2*pt(abs(Ybar[1] - Ybar[2])/sqrt(mse*(1/ni[1] + 1/ni[2])), df = n.-k, lower.tail = F)
+pvalue13 = 2*pt(abs(Ybar[1] - Ybar[3])/sqrt(mse*(1/ni[1] + 1/ni[3])), df = n.-k, lower.tail = F)
+pvalue23 = 2*pt(abs(Ybar[2] - Ybar[3])/sqrt(mse*(1/ni[2] + 1/ni[3])), df = n.-k, lower.tail = F)
+allpvalues = c(pvalue12, pvalue13, pvalue23)
+```
+
+```{r}
+BON_all = rbind(BON12, BON13, BON23)
+all.result = cbind(BON_all, allpvalues)
+rownames(all.result) = c("A vs. B", "A vs. C", "B vs. C")
+colnames(all.result) = c("Lower", "Upper", "P-value")
+knitr::kable(all.result)
+```
+
 
 (b) What is the largest significant difference in averages
 suggested by all of the confidence intervals? (This
 should be one number).
+A vs. C 
 ```{r}
-
+18.028046-6.771954
 ```
+
 
 (c) What is the smallest significant difference in aver-
 ages suggested by all of the confidence intervals?
 (This should be one number).
+B vs. C
 ```{r}
-
+17.961379-6.705288	
 ```
+
 
 (d) What two majors were the most significantly differ-
 ent according to the confidence intervals?
-```{r}
-```
+A and B
 
 #2
 
@@ -68,35 +121,30 @@ beanz
 beantable<- table(beanz)
 beantable
 ```
-```{r}
-probbean<- prop.table(beantable)
-probbean
-```
-```{r}
-t.test(probbean)
-```
 
+```{r}
+beantest<- chisq.test(beantable, correct = F)
+beantest
+```
+Answer = 8.1796
 (b) Find the p-value.
-```{r}
-
-```
+Answer = 0.04244
 
 (c) Did you reject or fail to reject the null if alpha = 0.05?
-```{r}
-
-```
+Answer p<a so we can reject
 
 (d) Which bean plant(s) did the weevils prefer more
 than expected if the null was true?
 ```{r}
-
+beantable-beantest$expected
 ```
-
+Answer = Northern
 (e) What category contributed most to the value of the
 test-statistic?
 ```{r}
+beantest$residuals^2
 ```
-
+Answer = Northern
 #3
 ```{r}
 blood<- read_csv("blood.csv")
@@ -107,43 +155,46 @@ blood
 particular disease is independent of blood type and
 alternative hypothesis for testing if having this par-
 ticular disease is independent of blood type.
-```{r}
 
-```
+Null:Disease is not independent from blood type
+Alt: Disease is independent from blood type
 
 (b) Find the test-statistic.
 ```{r}
-
+bloodtable<- table(blood$Type, blood$Disease)
+bloodtable
 ```
-
-(c) Find the p-value.
 ```{r}
-
+bloodtest<- chisq.test(bloodtable, correct = F)
+bloodtest
 ```
+Answer = 10.654
+(c) Find the p-value.
+Answer = 0.01375
 
 (d) State your conclusion in terms of the problem, as-
 suming alpha = 0.01.
-```{r}
 
-```
+p>a so we cannot reject. We cannot say for sure that they are independent
 
 (e) Were blood type A individuals more or less likely to
 have the disease than what we expected if the null
 was true?
 ```{r}
-
+bloodtest$observed - bloodtest$expected
 ```
+Answer = Less likely
 
 (f) Were blood type O individuals more or less likely to
 have the disease than what we expected if the null
 was true?
-```{r}
 
-```
+Answer = More likely
 
 (g) Which group contributed most to the value of the
 test-statistic?
 ```{r}
-
+bloodtest$residuals^2
 ```
 
+Answer = AB
