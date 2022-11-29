@@ -1,0 +1,45 @@
+---
+title: "hw 7"
+output: pdf_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+setwd("~/Documents/GitHub/stats100")
+```
+```{r}
+library(tidyverse)
+library(stats)
+library(ggplot2)
+library(RColorBrewer)
+```
+
+```{r}
+fitness<- read.csv("Fitness.csv")
+fitness
+```
+No outliers
+```{r}
+fitness %>%
+  ggplot(aes(x=Tread, y=Run))+
+  geom_point()+
+  geom_smooth(method = lm)
+```
+```{r}
+fitlm<- lm(Run ~ Tread, data = fitness)
+fitlm
+```
+
+b. 95% confidence interval for slope
+```{r}
+bothci<- confint(fitlm, level = 0.95)
+slopeci<- bothci[2,]
+slopeci
+```
+
+
+
+
