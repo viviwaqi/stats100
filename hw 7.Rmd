@@ -21,6 +21,7 @@ library(RColorBrewer)
 fitness<- read.csv("Fitness.csv")
 fitness
 ```
+a. Find estimated regression line
 No outliers
 ```{r}
 fitness %>%
@@ -33,13 +34,32 @@ fitlm<- lm(Run ~ Tread, data = fitness)
 fitlm
 ```
 
+
 b. 95% confidence interval for slope
 ```{r}
 bothci<- confint(fitlm, level = 0.95)
 slopeci<- bothci[2,]
 slopeci
 ```
+c. Find value of Se
+Se = 1.921
+```{r}
+summary.lm(fitlm)
+```
 
+d. Find value of r squared = 0.6807
 
+e. Does assumption of normality of error hold?
+```{r}
+plot(fitlm$fitted.values, fitlm$residuals, ylab = "Residuals", xlab = "Fitted Values")
+abline(h=0)
+```
+```{r}
+qqnorm(fitlm$residuals)
+qqline(fitlm$residuals)
+```
+```{r}
+shapiro.test(fitlm$residuals)
+```
 
 
